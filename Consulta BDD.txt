@@ -1,0 +1,62 @@
+CREATE TABLE PEAL (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255),
+    comienzo DATE,
+    fin DATE
+);
+
+CREATE TABLE COLABORADORES (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255),
+    apellido VARCHAR(255),
+    edad INT,
+    hijos INT,
+    zona_residencial VARCHAR(255),
+    telefono VARCHAR(15),
+    nivel_educativo VARCHAR(255),
+    egresos VARCHAR(255),
+    peal_id INT,
+    FOREIGN KEY (peal_id) REFERENCES PEAL(id)
+);
+
+CREATE TABLE EVALUACIONES (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255),
+    comienzo DATE,
+    ultima_actualizacion DATE,
+    peal_id INT,
+    FOREIGN KEY (peal_id) REFERENCES PEAL(id)
+);
+
+CREATE TABLE PUNTAJES (
+    colaborador_id INT,
+    evaluacion_id INT,
+    adaptacion_al_cambio FLOAT,
+    habilidades_relacionales FLOAT,
+    comunicacion FLOAT,
+    liderazgo FLOAT,
+    proactividad FLOAT,
+    presencia FLOAT,
+    puntualidad FLOAT,
+    porcentaje_asistencia FLOAT,
+    trabajo_en_equipo FLOAT,
+    responsabilidades FLOAT,
+    rendimiento_laboral FLOAT,
+    PRIMARY KEY (colaborador_id, evaluacion_id),
+    FOREIGN KEY (colaborador_id) REFERENCES COLABORADORES(id),
+    FOREIGN KEY (evaluacion_id) REFERENCES EVALUACIONES(id)
+);
+
+CREATE TABLE REPORTES (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255),
+    creado DATE,
+    tipo VARCHAR(255),
+    id_referencia_colaborador INT,
+    id_referencia_peal_1 INT,
+    id_referencia_peal_2 INT,
+    comentario VARCHAR(255),
+    FOREIGN KEY (id_referencia_colaborador) REFERENCES COLABORADORES(id),
+    FOREIGN KEY (id_referencia_peal_1) REFERENCES PEAL(id),
+    FOREIGN KEY (id_referencia_peal_2) REFERENCES PEAL(id)
+);
