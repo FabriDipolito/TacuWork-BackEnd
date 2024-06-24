@@ -16,11 +16,18 @@ class ColaboradoresController:
         nivel_educativo = data['nivel_educativo']
         egresos = data['egresos']
         peal_id = data['peal_id']
-        colaborador = self.colaboradores_service.create_colaborador(nombre, apellido, edad, hijos, zona_residencial, telefono, nivel_educativo, egresos, peal_id)
+        comienzo = data.get('comienzo')
+        finalizacion = data.get('finalizacion')
+
+        colaborador = self.colaboradores_service.create_colaborador(
+            nombre, apellido, edad, hijos, zona_residencial, telefono,
+            nivel_educativo, egresos, peal_id, comienzo, finalizacion
+        )
+
         if colaborador:
             return jsonify(colaborador), 201
         else:
-            return jsonify({"message": "Colaborador no se pudo crear"}),
+            return jsonify({"message": "Colaborador no se pudo crear"}), 400
 
     def get_colaborador(self, colaborador_id):
         colaborador = self.colaboradores_service.get_colaborador_by_id(colaborador_id)
@@ -32,6 +39,10 @@ class ColaboradoresController:
     def update_colaborador(self, colaborador_id):
         data = request.form
         imagen = request.files.get('imagen')
+
+        comienzo = data.get('comienzo')
+        finalizacion = data.get('finalizacion')
+
         colaborador = self.colaboradores_service.update_colaborador_by_id(
             colaborador_id,
             data.get('nombre'),
@@ -48,7 +59,9 @@ class ColaboradoresController:
             data.get('numero_cuenta'),
             data.get('nombre_emergencia'),
             data.get('telefono_emergencia'),
-            imagen
+            imagen,
+            comienzo,
+            finalizacion
         )
         if colaborador:
             return jsonify(colaborador), 201

@@ -23,21 +23,23 @@ class ColaboradoresRepository:
             self.conn.close()
 
     def create_colaborador(self, nombre, apellido, edad, hijos, zona_residencial, telefono, nivel_educativo, egresos,
-                           peal_id):
+                           peal_id, comienzo=None, finalizacion=None):
         try:
             if self.conn is None:
                 self.connect()
 
             cursor = self.conn.cursor()
-            # Ejecutar el INSERT y obtener el id del colaborador recién creado
             cursor.execute(
-                "INSERT INTO COLABORADORES (nombre, apellido, edad, hijos, zona_residencial, telefono, nivel_educativo, egresos, peal_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING id",
-                (nombre, apellido, edad, hijos, zona_residencial, telefono, nivel_educativo, egresos, peal_id)
+                """
+                INSERT INTO COLABORADORES (nombre, apellido, edad, hijos, zona_residencial, telefono, nivel_educativo, egresos, peal_id, comienzo, finalizacion)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING id
+                """,
+                (nombre, apellido, edad, hijos, zona_residencial, telefono, nivel_educativo, egresos, peal_id, comienzo, finalizacion)
             )
             colaborador_id = cursor.fetchone()[0]
             self.conn.commit()
 
-            # Hacer un SELECT para obtener los detalles completos del colaborador recién creado
             cursor.execute(
                 "SELECT * FROM COLABORADORES WHERE id = %s",
                 (colaborador_id,)
@@ -67,7 +69,8 @@ class ColaboradoresRepository:
 
     def update_colaborador_by_id(self, colaborador_id, nombre, apellido, edad, hijos, zona_residencial, telefono,
                                  nivel_educativo, egresos, peal_id, banco=None, sucursal=None, numero_cuenta=None,
-                                 nombre_emergencia=None, telefono_emergencia=None, imagen=None):
+                                 nombre_emergencia=None, telefono_emergencia=None, imagen=None, comienzo=None,
+                                 finalizacion=None):
         try:
             if self.conn is None:
                 self.connect()
@@ -88,12 +91,14 @@ class ColaboradoresRepository:
                 "sucursal = COALESCE(%s, sucursal)",
                 "numero_cuenta = COALESCE(%s, numero_cuenta)",
                 "nombre_emergencia = COALESCE(%s, nombre_emergencia)",
-                "telefono_emergencia = COALESCE(%s, telefono_emergencia)"
+                "telefono_emergencia = COALESCE(%s, telefono_emergencia)",
+                "comienzo = COALESCE(%s::DATE, comienzo)",
+                "finalizacion = COALESCE(%s::DATE, finalizacion)"
             ]
 
             params = [
                 nombre, apellido, edad, hijos, zona_residencial, telefono, nivel_educativo, egresos, peal_id,
-                banco, sucursal, numero_cuenta, nombre_emergencia, telefono_emergencia
+                banco, sucursal, numero_cuenta, nombre_emergencia, telefono_emergencia, comienzo, finalizacion
             ]
 
             if imagen:
@@ -105,7 +110,7 @@ class ColaboradoresRepository:
                 UPDATE COLABORADORES SET 
                     {', '.join(set_clauses)}
                 WHERE id = %s
-                RETURNING id, nombre, apellido, edad, hijos, zona_residencial, telefono, nivel_educativo, egresos, peal_id, imagen, banco, sucursal, numero_cuenta, nombre_emergencia, telefono_emergencia
+                RETURNING id, nombre, apellido, edad, hijos, zona_residencial, telefono, nivel_educativo, egresos, peal_id, imagen, banco, sucursal, numero_cuenta, nombre_emergencia, telefono_emergencia, comienzo, finalizacion
             """
             params.append(colaborador_id)
 
@@ -157,7 +162,8 @@ class ColaboradoresRepository:
 
             cursor = self.conn.cursor()
             cursor.execute(
-                "SELECT id, nombre, apellido, edad, hijos, zona_residencial, telefono, nivel_educativo, egresos, peal_id, imagen, banco, sucursal, numero_cuenta, nombre_emergencia, telefono_emergencia FROM COLABORADORES")
+                "SELECT id, nombre, apellido, edad, hijos, zona_residencial, telefono, nivel_educativo, egresos, peal_id, imagen, banco, sucursal, numero_cuenta, nombre_emergencia, telefono_emergencia, comienzo, finalizacion FROM COLABORADORES"
+            )
             colaboradores = cursor.fetchall()
             cursor.close()
             return colaboradores

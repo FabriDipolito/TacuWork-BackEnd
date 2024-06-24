@@ -7,6 +7,7 @@ from app.Controllers.colaboradores_controller import ColaboradoresController
 from app.Controllers.peal_controller import PealController
 from app.Controllers.evaluaciones_controller import EvaluacionesController
 from app.Controllers.puntajes_controller import PuntajesController
+from app.Controllers.encuesta_controller import EncuestaController
 
 app = Flask(__name__)
 
@@ -17,6 +18,7 @@ colaboradores_controller = ColaboradoresController()
 evaluaciones_controller = EvaluacionesController()
 puntajes_controller = PuntajesController()
 user_controller = UserController()
+encuesta_controller = EncuestaController()
 
 
 @app.route("/peal", methods=['OPTIONS', 'POST', 'GET', 'DELETE'])
@@ -125,6 +127,25 @@ def get_puntaje(colaborador_id, evaluacion_id):
         return puntajes_controller.update_puntaje(colaborador_id, evaluacion_id)
     elif request.method == 'DELETE':
         return puntajes_controller.delete_puntaje(colaborador_id, evaluacion_id)
+
+# Rutas para las operaciones de ENCUESTAS
+
+@app.route("/encuestas", methods=['OPTIONS', 'POST', 'GET'])
+def encuestas():
+    if request.method == 'OPTIONS':
+        return build_preflight_response()
+    elif request.method == 'POST':
+        return encuesta_controller.create_encuesta()
+    elif request.method == 'GET':
+        return encuesta_controller.get_all_encuestas()
+
+# Endpoint para manejar operaciones CRUD específicas de una ENCUESTA
+@app.route("/encuestas/<int:encuesta_id>", methods=['OPTIONS', 'DELETE'])
+def encuesta(encuesta_id):
+    if request.method == 'OPTIONS':
+        return build_preflight_response()
+    elif request.method == 'DELETE':
+        return encuesta_controller.delete_encuesta(encuesta_id)
 
 # Ruta para operacion de Authenticar
 

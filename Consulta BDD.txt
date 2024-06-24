@@ -19,6 +19,19 @@ CREATE TABLE COLABORADORES (
     FOREIGN KEY (peal_id) REFERENCES PEAL(id)
 );
 
+ALTER TABLE COLABORADORES ALTER COLUMN imagen NULL;
+
+ALTER TABLE COLABORADORES
+ADD COLUMN banco VARCHAR(255) NULL,
+ADD COLUMN sucursal VARCHAR(255) NULL,
+ADD COLUMN numero_cuenta VARCHAR(255) NULL,
+ADD COLUMN nombre_emergencia VARCHAR(255) NULL,
+ADD COLUMN telefono_emergencia VARCHAR(255) NULL;
+
+ALTER TABLE COLABORADORES
+ADD COLUMN comienzo DATE NULL,
+ADD COLUMN finalizacion DATE NULL;
+
 CREATE TABLE EVALUACIONES (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(255),
@@ -47,16 +60,20 @@ CREATE TABLE PUNTAJES (
     FOREIGN KEY (evaluacion_id) REFERENCES EVALUACIONES(id)
 );
 
-CREATE TABLE REPORTES (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(255),
-    creado DATE,
-    tipo VARCHAR(255),
-    id_referencia_colaborador INT,
-    id_referencia_peal_1 INT,
-    id_referencia_peal_2 INT,
-    comentario VARCHAR(255),
-    FOREIGN KEY (id_referencia_colaborador) REFERENCES COLABORADORES(id),
-    FOREIGN KEY (id_referencia_peal_1) REFERENCES PEAL(id),
-    FOREIGN KEY (id_referencia_peal_2) REFERENCES PEAL(id)
+CREATE TABLE USERS (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL
 );
+
+CREATE TABLE ENCUESTAS (
+    id SERIAL PRIMARY KEY,
+    respuesta1 VARCHAR(32),
+    respuesta2 VARCHAR(32),
+    respuesta3 VARCHAR(32),
+    comentario VARCHAR(255),
+    peal_id INT,
+    FOREIGN KEY (peal_id) REFERENCES PEAL(id)
+);
+
+ALTER TABLE ENCUESTAS ADD COLUMN nombre VARCHAR(50);
