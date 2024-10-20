@@ -1,3 +1,6 @@
+import os
+from dotenv import load_dotenv
+
 import psycopg2
 # from app.config import db_config
 
@@ -7,14 +10,22 @@ class PealRepository:
         self.conn = None
 
     def connect(self):
+        load_dotenv()
+
+        database = os.getenv('DB_DATABASE')
+        user = os.getenv('DB_USER')
+        password = os.getenv('DB_PASSWORD')
+        host = os.getenv('DB_HOST')
+        port = os.getenv('DB_PORT')
+
         try:
-            # params = db_config()
-            self.conn = psycopg2.connect(database='Tesis',
-                                         user='postgres',
-                                         password='admin',
-                                         host='localhost',
-                                         port='5432',
-                                         )
+            self.conn = psycopg2.connect(
+                database=database,
+                user=user,
+                password=password,
+                host=host,
+                port=port,
+            )
             print(self.conn)
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
